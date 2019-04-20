@@ -27,6 +27,7 @@ function convert() {
 
 if [[ -z "$1" ]]; then
     echo "Usage: davtomp4.sh /path/to/dav"
+    echo "Version: 0.1"
     echo ""
     echo "path/to/dav can be a directory or .dav file"
     echo ""
