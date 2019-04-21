@@ -24,23 +24,22 @@ def which(program):
     return None
 
 
-ffmpeg_args = ["-vcodec", "libx264", "-crf", "24", "-filter:v", "setpts=1*PTS"]
-
 parser = argparse.ArgumentParser(description="Convert .dav files to .mp4.")
 parser.add_argument('path', help='Path to dav file(s)')
 parser.add_argument('-m', '--ffmpeg-location', required=False, help='Path to ffmpeg binary')
 parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + version)
 args = parser.parse_args()
 
+ffmpeg_args = ["-vcodec", "libx264", "-crf", "24", "-filter:v", "setpts=1*PTS"]
 path = args.path
 
 if args.ffmpeg_location:
-    ffmpeg = args.ffmpeg_location
+    ffmpeg = which(args.ffmpeg_location)
 else:
     ffmpeg = which("ffmpeg")
-    if not ffmpeg:
-        print "Error: could not find ffmpeg. Use ffmpeg-location to specify path to binary."
-# ffmpeg_cmd = "{0} {1}".format(ffmpeg, ffmpeg_args)
+if not ffmpeg:
+    print "Error: could not find ffmpeg. Use ffmpeg-location to specify path to binary."
+    sys.exit(1)
 
 if os.path.isdir(path):
     for filename in os.listdir(path):
@@ -53,7 +52,6 @@ if os.path.isdir(path):
 elif os.path.isfile(path):
     if path.endswith(".dav"):
         outfile = path + '.mp4'
-        # os.system(ffmpeg_cmd.format(path, path + '.mp4'))
         subprocess.call([ffmpeg, '-i', path] + ffmpeg_args + [outfile])
     else:
         print "Error: .dav file(s) not found at path."
